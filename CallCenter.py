@@ -1,7 +1,10 @@
 # Install the assemblyai package by executing the command `pip3 install assemblyai` (macOS) or `pip install assemblyai` (Windows).
 import io
 import os
+import time
+
 from pyannote.audio import Pipeline
+import whisper
 
 # Import the AssemblyAI module
 import assemblyai as aai
@@ -30,56 +33,148 @@ out_path='C:\\Users\\jerry\\Downloads\\transcripts\\'
 #                                   sentiment_analysis=True,
 #                                   summarization=True,
 #                                  speaker_labels=True)
-dir_list = os.listdir(location)
-for file in dir_list :
-    input_file=location+file
 
-    # assign files
-    output_file = "result.wav"
-
+def main():
+    print(f"Whisper models {whisper.available_models()}")
+    model = whisper.load_model("small.en", device="cuda")
     pipeline = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
         use_auth_token="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")
 
     pipeline.to(torch.device("cuda"))
+    dir_list = os.listdir(location)
+    for file in dir_list :
+        input_file=location+file
 
-    # apply pretrained pipeline
-    # Pass the audio tensor and sample rate to the pipeline
-    diarization = pipeline(input_file)
-        # {"waveform": audio_tensor, "sample_rate": sample_rate_tensor})
+        # assign files
+        output_file = "result.wav"
 
-    id_convo = []
-    # print the result
-    for turn, _, speaker in diarization.itertracks(yield_label=True):
-        print(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}")
-        whisper.
-    # Transcribe the audio with the configuration
-    # transcript = transcriber.transcribe(input_file, config)
+        # apply pretrained pipeline
+        # Pass the audio tensor and sample rate to the pipeline
+        print("DIARIZING " + input_file)
+        start=time.time()
+        diarization = pipeline(input_file, num_speakers=2)
+        print("Elapsed "+ str(time.time()-start))
+            # {"waveform": audio_tensor, "sample_rate": sample_rate_tensor})
+        speakers = []
+        for turn, _, speaker in diarization.itertracks(yield_label=True):
+            dict = {'speaker':speaker, 'start':turn.start, 'end':turn.end}
+            speakers.append(dict)
+
+        segment_wave_files()
+
+        print("TRANSCRIBING " + input_file)
+        start=time.time()
+        transcript = model.transcribe(input_file)
+        print("Elapsed "+str(time.time()-start))
+
+        alignDiarizationToTranscript(diarization, transcript)
+
+        id_convo = []
+
+        # Transcribe the audio with the configuration
+        # transcript = transcriber.transcribe(input_file, config)
+        #
+        # out_file= out_path + file[:file.index('.')] + '.txt'
+        # # Print the transcript with speaker labels
+        # transcript_array = []
+        # with open(out_file, 'w') as f:
+        #     for utterance in transcript.utterances:
+        #         transcript_array.append(f"Speaker {utterance.speaker}: {utterance.text}")
+        #         print(f"Speaker {utterance.speaker}: {utterance.text} ->-> {utterance.confidence}", file=f)
+        #         print("--------------------------------------------", file=f)
+        #
+        # pprint(transcript_array)
+        # # prompt = "Provide a brief summary of the transcript."
+        # # result = transcript.lemur.task(
+        # #     prompt, final_model=aai.LemurModel.claude3_5_sonnet
+        # # ))
+        # #
+        # # print(result.response)
+
+    # Alternatively, if you have a URL to an audio file, you can transcribe it with the following code.
+    # Uncomment the line below and replace the URL with the link to your audio file.
+    # transcript = transcriber.transcribe("https://storage.googleapis.com/aai-web-samples/espn-bears.m4a")
+
+    # After the transcription is complete, the text is printed out to the console.
+    # print(transcript.text)
+    #pprint(transcript.text)
+import datetime
+
+def gtWindow(number1, number2, window):
+       if number1+window>number2: return True
+       else: return False
+j=0
+def alignDiarizationToTranscript(diary, transcript):
+    global j
+
+    # cluster speakers
+    test = diary.itertracks(yield_label=True)
+    speakers=[]
+    currSpeaker=""
+    for turn, _, speaker in diary.itertracks(yield_label=True):
+        if currSpeaker  != speaker:
+            currSpeaker = speaker
+            dict = {'speaker':currSpeaker, 'start':round(turn.start, 1),
+                             'end':round(turn.end, 1)}
+            speakers.append(dict)
+            continue
+        # just update speaker's end time
+        speakers[-1]['end']=round(turn.end, 1)
+
+    # go through transcript and align to speaker
+    segments = transcript["segments"]
+    segIndex = 0
+    for speaker in speakers:
+        speaker['transcripts']=[]
+        while True:
+            if speaker['end']+0.5>segments[segIndex]['start'] and speaker['end']+1.0>segments[segIndex]['end']:
+                speaker['transcripts'].append(segments[segIndex]['text'])
+                segIndex+=1
+                print(f"segIndex = {segIndex}")
+                print(f"len(segments) = {len(segments)}")
+                print(segIndex >= len(segments))
+                test = segIndex >= len(segments)
+                print(f"test = {test}")
+                if test: break
+            else: break
+
+        test = segIndex >= len(segments)
+        print(f"test2 = {test}")
+        if test: break
+        if segIndex>= len(segments):
+
+            break
+
+     # print the result
+    out_file = open("out_stuff_" + str(j) + "_diarization.txt", "w")
+    i = 0
+    for speaker in speakers:
+        print(f"{speaker['speaker']} : start={speaker['start']}s stop={speaker['end']}s -->>\n {speaker['transcripts']}", file=out_file)
+
+    out_file.close()
+
+
+    #        print(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}", file=out_file)
+
+    out_file = open("out_stuff_"+str(j)+"_transcript.txt", "w")
+    for seg_dict in transcript["segments"]:
+        print(f"start={seg_dict['start'] :.1f}s stop={seg_dict['end']:.1f}s --> {seg_dict['text']}", file=out_file)
+
+    out_file.close()
+
+    # out_file = open("out_stuff_"+str(j)+"_diarization.txt", "w")
     #
-    # out_file= out_path + file[:file.index('.')] + '.txt'
-    # # Print the transcript with speaker labels
-    # transcript_array = []
-    # with open(out_file, 'w') as f:
-    #     for utterance in transcript.utterances:
-    #         transcript_array.append(f"Speaker {utterance.speaker}: {utterance.text}")
-    #         print(f"Speaker {utterance.speaker}: {utterance.text} ->-> {utterance.confidence}", file=f)
-    #         print("--------------------------------------------", file=f)
+    # # print the result
+    # i=0
+    # test = diary.itertracks(yield_label=True)
+    # for turn, _, speaker in diary.itertracks(yield_label=True):
+    #     if i>20: break
+    #     i+=1
+    #     print(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}", file=out_file)
     #
-    # pprint(transcript_array)
-    # # prompt = "Provide a brief summary of the transcript."
-    # # result = transcript.lemur.task(
-    # #     prompt, final_model=aai.LemurModel.claude3_5_sonnet
-    # # ))
-    # #
-    # # print(result.response)
-
-# Alternatively, if you have a URL to an audio file, you can transcribe it with the following code.
-# Uncomment the line below and replace the URL with the link to your audio file.
-# transcript = transcriber.transcribe("https://storage.googleapis.com/aai-web-samples/espn-bears.m4a")
-
-# After the transcription is complete, the text is printed out to the console.
-# print(transcript.text)
-#pprint(transcript.text)
+    # out_file.close()
+    j+=1
 
 
 def convertMp3ToWav(file) :
@@ -128,3 +223,5 @@ def convertMp3ToWav(file) :
     sample_rate_tensor = torch.tensor(float(sample_rate))
 
 # pipeline.to(torch.device("cuda"))
+
+main()
