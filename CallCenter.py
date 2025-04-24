@@ -15,6 +15,10 @@ from transformers.utils import is_flash_attn_2_available
 from pydub import AudioSegment
 import numpy as np
 
+from segment_wave_files import segment_wave_files
+from transcribe_files import transcribe_segments
+from transcript_analysis import transcript_analysis
+
 # Your API token is already set here
 # AssemblyAI key
 aai.settings.api_key = "37a4985f47ea4d3c834b4e2c3abdbb15"
@@ -35,8 +39,7 @@ out_path='C:\\Users\\jerry\\Downloads\\transcripts\\'
 #                                  speaker_labels=True)
 
 def main():
-    print(f"Whisper models {whisper.available_models()}")
-    model = whisper.load_model("small.en", device="cuda")
+
     pipeline = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
         use_auth_token="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")
@@ -57,48 +60,27 @@ def main():
         print("Elapsed "+ str(time.time()-start))
             # {"waveform": audio_tensor, "sample_rate": sample_rate_tensor})
         speakers = []
+        contSpeaker = ""
+        dict = None
         for turn, _, speaker in diarization.itertracks(yield_label=True):
-            dict = {'speaker':speaker, 'start':turn.start, 'end':turn.end}
-            speakers.append(dict)
+            if contSpeaker != speaker:
+                if dict is not None:
+                    speakers.append(dict)
+                dict = {'speaker': speaker, 'start': round(turn.start, 1),
+                        'end': round(turn.end, 1)}
+                contSpeaker = speaker
+            else:
+                dict['end']= round(turn.end, 1)
 
-        segment_wave_files()
 
-        print("TRANSCRIBING " + input_file)
-        start=time.time()
-        transcript = model.transcribe(input_file)
-        print("Elapsed "+str(time.time()-start))
+        speakers = segment_wave_files(speakers, input_file)
 
-        alignDiarizationToTranscript(diarization, transcript)
+        transcript = transcribe_segments(speakers)
+        pprint(transcript)
 
-        id_convo = []
+        summary = transcript_analysis(transcript)
+        pprint(summary)
 
-        # Transcribe the audio with the configuration
-        # transcript = transcriber.transcribe(input_file, config)
-        #
-        # out_file= out_path + file[:file.index('.')] + '.txt'
-        # # Print the transcript with speaker labels
-        # transcript_array = []
-        # with open(out_file, 'w') as f:
-        #     for utterance in transcript.utterances:
-        #         transcript_array.append(f"Speaker {utterance.speaker}: {utterance.text}")
-        #         print(f"Speaker {utterance.speaker}: {utterance.text} ->-> {utterance.confidence}", file=f)
-        #         print("--------------------------------------------", file=f)
-        #
-        # pprint(transcript_array)
-        # # prompt = "Provide a brief summary of the transcript."
-        # # result = transcript.lemur.task(
-        # #     prompt, final_model=aai.LemurModel.claude3_5_sonnet
-        # # ))
-        # #
-        # # print(result.response)
-
-    # Alternatively, if you have a URL to an audio file, you can transcribe it with the following code.
-    # Uncomment the line below and replace the URL with the link to your audio file.
-    # transcript = transcriber.transcribe("https://storage.googleapis.com/aai-web-samples/espn-bears.m4a")
-
-    # After the transcription is complete, the text is printed out to the console.
-    # print(transcript.text)
-    #pprint(transcript.text)
 import datetime
 
 def gtWindow(number1, number2, window):

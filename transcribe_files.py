@@ -1,0 +1,23 @@
+import whisper
+import time
+def transcribe_segments(speakers):
+    print(f"Whisper models {whisper.available_models()}")
+    model = whisper.load_model("small.en", device="cuda")
+    transcripts = []
+    for speaker in speakers:
+        # {'speaker': speaker, 'start': round(turn.start, 1),
+        #  'end': round(turn.end, 1), 'clipFile':clipName}
+        input_file = speaker['clipFile']
+
+        print("TRANSCRIBING " + input_file)
+        start = time.time()
+        transcript = model.transcribe(input_file)
+        print("Elapsed " + str(time.time() - start))
+        segments = transcript["segments"]
+        outText = ""
+        for segment in segments:
+            outText += segment['text']
+
+        transcripts.append(speaker['speaker']+" : "+outText)
+
+    return transcripts
