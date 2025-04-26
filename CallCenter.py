@@ -48,9 +48,7 @@ def main():
     dir_list = os.listdir(location)
     for file in dir_list :
         input_file=location+file
-
-        # assign files
-        output_file = "result.wav"
+        # input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
 
         # apply pretrained pipeline
         # Pass the audio tensor and sample rate to the pipeline
@@ -76,10 +74,14 @@ def main():
         speakers = segment_wave_files(speakers, input_file)
 
         transcript = transcribe_segments(speakers)
+        print(
+            "---------------------------------------------------------------------")
         pprint(transcript)
+        print("---------------------------------------------------------------------")
 
         summary = transcript_analysis(transcript)
-        pprint(summary)
+        pprint(summary) #.encode('utf-8').decode('utf-8'))
+        print("\n\n\n\n\n\n\n")
 
 import datetime
 
