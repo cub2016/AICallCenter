@@ -5,7 +5,7 @@ import shutil
 
 def segment_wave_files(speakers, file):
 
-    folder = "segements"
+    folder = ".segements"
     if os.path.exists(folder):
         shutil.rmtree(folder)
 

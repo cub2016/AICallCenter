@@ -1,10 +1,8 @@
 from encodings.utf_8 import encode
 
 from openai import OpenAI
-import os
-from pprint import pprint
+
 from transformers import pipeline
-import torch
 
 def use_openai(input):
     client = OpenAI()
@@ -20,8 +18,9 @@ def use_openai(input):
 def use_huggingface(input):
     # Define the model name
     # model_name = "cnicu/t5-small-booksum"
-    model_name = "sshleifer/distilbart-cnn-12-6"
+    # model_name = "sshleifer/distilbart-cnn-12-6"
     #model_name = "facebook/bart-large-cnn"
+    model_name = "google/pegasus-large"
 
     summarizer = pipeline(task="summarization", model=model_name)
     # summarizer.to(torch.device("cuda"))
@@ -41,8 +40,8 @@ def transcript_analysis(transcript):
         input += speaker
         input += "\n"
 
-    response = use_huggingface(input)
-    # use_openai(input)
+    # response = use_huggingface(input)
+    response = use_openai(input)
 
     # with open('filename', 'w', encoding='utf-8') as f:
     # pprint(response.output_text.decode('UTF-8'))
