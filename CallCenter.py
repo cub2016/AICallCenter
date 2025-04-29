@@ -29,8 +29,8 @@ def main():
     pipeline.to(torch.device("cuda"))
     dir_list = os.listdir(location)
     for file in dir_list :
-        # input_file=location+file
-        input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
+        input_file=location+file
+        # input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
 
         # apply pretrained pipeline
         # Pass the audio tensor and sample rate to the pipeline
