@@ -11,7 +11,9 @@ def use_openai(input):
         # model="gpt-4.1",
         input=f"""You are an helpful assistant.  Analyze the following transcript and 
         give a summary of the conversation.  Also give the sentiment of each speaker 
-        as the conversation progresses. Response should only contain ascii characters. {input}"""
+        as the conversation progresses. Also replace Speaker_0x with name or title 
+        if it can be derived from conversation. Response should only contain ascii 
+        characters. {input}"""
     )
     return response.output_text
 

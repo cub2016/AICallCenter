@@ -45,14 +45,18 @@ def diarize_wav_file(file_name):
 
     return speakers
 
+
+def convert_mono_16khz(location, file):
+    sound = AudioSegment.from_file(location+file, "wav")
+    sound = sound.set_channels(1)
+    sound = sound.set_frame_rate(16000)
+    sound.export(location+"16khz"+file, "wav")
+
 location=".\\data\\"
 def get_included_files():
     files = os.listdir(location)
-    pathFiles = []
-    for file in files:
-        pathFiles.append(location+file)
 
-    return pathFiles
+    return location, files
 
 def main():
 
@@ -85,7 +89,7 @@ def convertMp3ToWav(file) :
     sample_rate = sound.frame_count() / sound.duration_seconds
     print(sample_rate)
     duration = sound.duration_seconds
-    sound = sound.set_frame_rate(8000)
+    sound = sound.set_frame_rate(16000)
     sound = sound.set_channels(1)
     outFile = os.path.splitext(file)[0]+".wav"
     sound.export(outFile, format="wav")

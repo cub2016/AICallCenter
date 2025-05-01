@@ -7,7 +7,7 @@ from segment_wave_files import segment_wave_files
 from transcript_analysis import transcript_analysis
 from transcribe_files import transcribe_segments
 
-wave_files = get_included_files()
+location, wave_files = get_included_files()
 
 
 def main():
@@ -19,9 +19,9 @@ def main():
     def get_file_sel():
         if selected_file is None:
             return
-        st.session_state.selected_file = selected_file  # Store the selected option in session state
+        st.session_state.selected_file = location+selected_file  # Store the selected option in session state
         st.write(f"{selected_file} is selected") # Display feedback
-        st.session_state.wave_file = selected_file
+        st.session_state.wave_file = st.session_state.selected_file
 
     selected_file = st.selectbox("Select an element:", wave_files)
     get_file_sel()
@@ -61,8 +61,6 @@ def main():
 
                     transcripts = transcribe_segments(speakers)
                     analysis = transcript_analysis(transcripts)
-
-                    # st.text_area(analysis)
                 except Exception as e:
                     st.error(f"Error processing file: {st.session_state.wave_file}")
         else:
@@ -74,12 +72,16 @@ def main():
 
     # --- Large Text Box (Display Only) ---
     if analysis != "":
+        analysis = analysis[9:]
         index=analysis.lower().find("sentiment")
-        summary=analysis[0:index]
+        summary=analysis[0:index].lstrip("\n")
         sentiment = analysis[index:]
-        height = 34*363
-        st.text_area("summary:", value=summary, disabled =False, height=34*15)
-        st.text_area("sentiment:", value=sentiment, disabled =False, height=34*15)
+        index=sentiment.lower().find(":")
+        sentiment = sentiment[index+1:].lstrip("\n")
+        height = 34*15
+        st.text_area("", value=analysis, disabled =True, height=height)
+        st.text_area("SUMMARY:", value=summary, disabled =False, height=height)
+        st.text_area("SENTIMENT:", value=sentiment, disabled =False, height=height)
 
 
 main()
