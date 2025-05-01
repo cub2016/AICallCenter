@@ -75,13 +75,14 @@ def main():
         analysis = analysis[9:]
         index=analysis.lower().find("sentiment")
         summary=analysis[0:index].lstrip("\n")
+
         sentiment = analysis[index:]
         index=sentiment.lower().find(":")
         sentiment = sentiment[index+1:].lstrip("\n")
+
         height = 34*15
-        st.text_area("", value=analysis, disabled =True, height=height)
-        st.text_area("SUMMARY:", value=summary, disabled =False, height=height)
-        st.text_area("SENTIMENT:", value=sentiment, disabled =False, height=height)
+        st.text_area("SUMMARY:", value=summary, disabled=True, height=height)
+        st.text_area("SENTIMENT:", value=sentiment, disabled=True, height=height)
 
 
 main()
