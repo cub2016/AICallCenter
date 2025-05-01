@@ -3,5 +3,6 @@
 /.venv/*
 /__pycache__/*
 /.segments/*
-.segments/*
-.segments/
+../.segments/*
+../.segments/
+../__pycache__/

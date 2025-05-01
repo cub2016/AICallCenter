@@ -5,11 +5,11 @@ import shutil
 
 def segment_wave_files(speakers, file):
 
-    folder = ".segements"
+    folder = ".segments"
     if os.path.exists(folder):
         shutil.rmtree(folder)
-
-    os.makedirs(folder)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
     audio = AudioSegment.from_file(file, format="wav")#.resample(sample_rate_Hz=8000, sample_width=2, channels=1)
 

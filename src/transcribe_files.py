@@ -4,7 +4,8 @@ import whisper
 import time
 def transcribe_segments(speakers):
     print(f"Whisper models {whisper.available_models()}")
-    model = whisper.load_model("small.en", device="cuda")
+    # model = whisper.load_model("small.en", device="cuda")
+    model = whisper.load_model("tiny.en", device="cuda")
     transcripts = []
     input_file = ""
     for speaker in speakers:
