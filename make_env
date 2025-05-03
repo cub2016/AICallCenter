@@ -1,7 +1,10 @@
 pip install torch==2.7.0 --index-url https://download.pytorch.org/whl/cu126
-pip install torch==2.7.0 --index-url https://download.pytorch.org/whl/cu126
-pip install torch==0.22.0 --index-url https://download.pytorch.org/whl/cu126
+pip install torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu126
+pip install torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu126
 
 pip install -r requirements.txt
+
+git config --global user.email "jerryf31415@gmail.com"
+git config --global user.name "jerry flynn"
 
 streamlit run ./src/app.py 

@@ -2,8 +2,6 @@
 import io
 import os
 import time
-import streamlit as st
-
 from pyannote.audio import Pipeline
 
 # Import the AssemblyAI module
@@ -17,10 +15,13 @@ import numpy as np
 from segment_wave_files import segment_wave_files
 from transcribe_files import transcribe_segments
 from transcript_analysis import transcript_analysis
-
+#from huggingface_hub import login
+#login()
+hugging_face = os.environ.get("HUGGING_FACE")
 pipelineDiary = Pipeline.from_pretrained(
     "pyannote/speaker-diarization-3.1",
-    use_auth_token="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")
+    use_auth_token=hugging_face)
+#pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")
 
 pipelineDiary.to(torch.device("cuda"))
 
@@ -52,7 +53,8 @@ def convert_mono_16khz(location, file):
     sound = sound.set_frame_rate(16000)
     sound.export(location+"16khz"+file, "wav")
 
-location=".\\data\\"
+#location=".\\data\\"
+location = os.path.join(".", "data") + os.sep
 def get_included_files():
     files = os.listdir(location)
 
@@ -95,17 +97,4 @@ def convertMp3ToWav(file) :
     sound.export(outFile, format="wav")
     return outFile
 
-    # fp_samples = np.array(sound.get_array_of_samples()).astype(np.float32)
-    # chan_array = np.array([num_channels] * num_frames).astype(np.float32)
-    # audio_array = np.stack((fp_samples, chan_array))
-    # # audio_array = [sound.get_array_of_samples().astype(np.float32), [num_channels]*num_frames]
-    # # audio_array = np.array(audio_array)
-    #
-    # audio_array2 = np.random.randn(num_frames, num_channels)
-    # # Convert numpy array to torch tensor
-    # audio_tensor = torch.from_numpy(audio_array)  # .T
-    # # audio_tensor = audio_tensor.T
-    # # Create a sample rate tensor
-    # sample_rate_tensor = torch.tensor(float(sample_rate))
-
-# main()
+main()
