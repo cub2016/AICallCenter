@@ -1,3 +1,5 @@
+pip uninstall torch torchvision torchaudio
+
 pip install torch==2.7.0 --index-url https://download.pytorch.org/whl/cu126
 pip install torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu126
 pip install torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu126

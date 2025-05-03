@@ -5,7 +5,9 @@ import time
 def transcribe_segments(speakers):
     print(f"Whisper models {whisper.available_models()}")
     # model = whisper.load_model("small.en", device="cuda")
-    model = whisper.load_model("medium.en", device="cuda")
+    #model = whisper.load_model("medium.en", device="cuda")
+#    model = whisper.load_model("turbo", device="cuda")
+    model = whisper.load_model("large-v3-turbo", device="cuda")
     transcripts = []
     input_file = ""
     print("Transcribing ALL segments")
