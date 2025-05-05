@@ -21,7 +21,6 @@ hugging_face = os.environ.get("HUGGING_FACE")
 pipelineDiary = Pipeline.from_pretrained(
     "pyannote/speaker-diarization-3.1",
     use_auth_token=hugging_face)
-#pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")
 
 pipelineDiary.to(torch.device("cuda"))
 
@@ -53,7 +52,6 @@ def convert_mono_16khz(location, file):
     sound = sound.set_frame_rate(16000)
     sound.export(location+"16khz"+file, "wav")
 
-#location=".\\data\\"
 location = os.path.join(".", "data") + os.sep
 def get_included_files():
     files = os.listdir(location)
@@ -64,8 +62,8 @@ def main():
 
     dir_list = os.listdir(location)
     for file in dir_list :
-        input_file=location+file
-        # input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
+        #input_file=location+file
+        input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
 
         # apply pretrained pipeline
         # Pass the audio tensor and sample rate to the pipeline
