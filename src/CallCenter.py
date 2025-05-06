@@ -52,7 +52,9 @@ def convert_mono_16khz(location, file):
     sound = sound.set_frame_rate(16000)
     sound.export(location+"16khz"+file, "wav")
 
-location = os.path.join(".", "data") + os.sep
+#location = os.path.join("..", "data") + os.sep
+location = "/workspace/AICallCenter/data/"
+
 def get_included_files():
     files = os.listdir(location)
 
@@ -62,8 +64,8 @@ def main():
 
     dir_list = os.listdir(location)
     for file in dir_list :
-        #input_file=location+file
-        input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
+        input_file=location+file
+        #input_file='C:\\Users\\jerry\\Downloads\\SampleCallsWave\\Tech Support Help from Call Center Experts1.wav'
 
         # apply pretrained pipeline
         # Pass the audio tensor and sample rate to the pipeline
