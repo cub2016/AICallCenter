@@ -50,8 +50,8 @@ def diarize_wav_file(file_name):
 
     return speakers, tmp_file
 
-#location = os.path.join("..", "data") + os.sep
-location = "/workspace/AICallCenter/data/"
+location = os.path.join(".", "data") + os.sep
+#location = os.path.join("workspace", "AICallCenter", "data") + os.sep
 
 def get_included_files():
     files = os.listdir(location)

@@ -1,5 +1,5 @@
 from encodings.utf_8 import encode
-
+from langchain_huggingface import HuggingFacePipeline
 from langchain_core.documents import transformers
 from openai import OpenAI
 import time
@@ -92,7 +92,6 @@ def use_huggingface(input):
 from transformers import TorchAoConfig, AutoModelForCausalLM, AutoTokenizer
 from langchain_core.prompts import PromptTemplate
 from transformers import pipeline
-from langchain_community.llms import HuggingFacePipeline
 from langchain_core.output_parsers import StrOutputParser
 
 def use_huggingface2(input):
@@ -189,8 +188,8 @@ def transcript_analysis(transcript):
         input += speaker + "\n"
 
     start = time.time()
-    response = use_huggingface2(input)
- #   response = use_openai(input)
+    # response = use_huggingface2(input)
+    response = use_openai(input)
     #response = use_bigbird_pegasus_large_arxiv(input)
     stop = time.time()
     elapsed=stop-start

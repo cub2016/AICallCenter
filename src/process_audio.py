@@ -1,3 +1,5 @@
+from array import array
+
 import numpy as np
 import librosa
 #import sqlite3
@@ -13,7 +15,7 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
 
 def bandpass_filter(data, lowcut, highcut, fs, order=5):
     print("shape is "+ str(data.shape))
-    data.flatten()
+    # data.flatten()
     sos = butter_bandpass(lowcut, highcut, fs, order=order)
     return sosfilt(sos, data)
 
@@ -27,23 +29,42 @@ def process_audio(file):
     audio = AudioSegment.from_file(file)
     audio = audio.set_channels(1).set_frame_rate(16000)
 
-    samples = np.array(audio.get_array_of_samples()).astype(np.float32)
+    audio_samples = audio.get_array_of_samples()
+    audio_samples = audio_samples[0:len(audio_samples)-len(audio_samples)%2]
+    samples = np.array(audio_samples, dtype = np.float32).reshape((-1, audio.channels)) / (
+            1 << (8 * audio.sample_width - 1))
     sr = audio.frame_rate
 
-    lowcut =300.0,
+    lowcut =300.0
     highcut = 4000.0
     filtered = bandpass_filter(samples, lowcut, highcut, fs=sr)
     normalized = normalize_audio(filtered)
+    maxi = max(normalized)
+    mini = min(normalized)
 
     # Convert back to WAV in memory
+    back = normalized*(1 << (8 * audio.sample_width - 1))
+    maxi = max(back)
+    mini = min(back)
+
+    back = back.flatten().astype(np.int16)
+    maxi = max(back)
+    mini = min(back)
+    back = array('h', back.tolist())
     processed_audio = AudioSegment(
-        normalized.tobytes(),
+        back,
         frame_rate=sr,
         sample_width=audio.sample_width,
         channels=1
     )
+
     if not os.path.exists("./tmp"):
         os.makedirs("./tmp")
+    else:
+        if os.path.isfile("./tmp/temp.wav"):
+            os.remove("./tmp/temp.wav")
+
+
     processed_audio.export("./tmp/temp.wav", format="wav")
     return "./tmp/temp.wav"
  #   buffer = io.BytesIO()
