@@ -114,19 +114,20 @@ def use_huggingface2(input):
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         device_map="auto",
-        max_length=1000,
+        # max_length=1000,
+        max_new_tokens=800,
         eos_token_id=tokenizer.eos_token_id
     )
 
     # Wrap in LangChain-compatible LLM
-    text ="""The Trump administration is taking a major step to super-charge deportation efforts by deputizing law enforcement across the country to carry out immigration enforcement, a Department of Homeland Security memo exclusively reviewed by The Daily Wire reveals.
-The memo lays out that DHS has signed 562 agreements with state and local law enforcement groups, taking advantage of a federal law that allows the agencies to enforce certain aspects of immigration law. While these sorts of agreements existed in the previous administration, the number of agreements signed since Trump took office is already a 316% increase from what was signed during four years of the Biden administration, the memo says.
-The agreements could be one of the biggest keys to boosting deportation numbers, which members of the administration have reportedly grown frustrated with. With an estimated 18.6 million illegal aliens currently present in the United States and a judiciary that has continuously stonewalled the Trump administration’s attempts to deport illegal aliens, the federal government may otherwise struggle to remove a significant share of the illegal population without support from law enforcement partners.
-Under the agreement, state and local law enforcement agencies are able to conduct immigration enforcement operations with ICE oversight, use federal immigration databases to identify the status of arrestees, and initiate ICE detainers to hold illegal aliens until ICE can gain custody of them, providing what could be a massive force multiplier in the Trump administration’s effort to deport at least one million illegal aliens per year.
-The administration says its collaboration with state and local law enforcement is yielding results.
-“Since January 20, our partnerships with state and local law enforcement have led to over 1,100 arrests of dangerous criminal illegal aliens,” the Homeland Security memo says. “ICE has also trained over 5,000 officers across the country to help track down and arrest criminal illegal aliens in their communities.”
-One far-left organization backed by George Soros’s Open Society Foundations complained that these agreements “are designed to extend the reach of the Trump deportation machine.” Now, they’re proving to be an effective force multiplier for the Trump administration as it seeks to enforce federal immigration law.
-One of these agreements resulted in Operation Tidal Wave, a first-of-its-kind joint immigration enforcement effort from Homeland Security and Florida."""
+#     text ="""The Trump administration is taking a major step to super-charge deportation efforts by deputizing law enforcement across the country to carry out immigration enforcement, a Department of Homeland Security memo exclusively reviewed by The Daily Wire reveals.
+# The memo lays out that DHS has signed 562 agreements with state and local law enforcement groups, taking advantage of a federal law that allows the agencies to enforce certain aspects of immigration law. While these sorts of agreements existed in the previous administration, the number of agreements signed since Trump took office is already a 316% increase from what was signed during four years of the Biden administration, the memo says.
+# The agreements could be one of the biggest keys to boosting deportation numbers, which members of the administration have reportedly grown frustrated with. With an estimated 18.6 million illegal aliens currently present in the United States and a judiciary that has continuously stonewalled the Trump administration’s attempts to deport illegal aliens, the federal government may otherwise struggle to remove a significant share of the illegal population without support from law enforcement partners.
+# Under the agreement, state and local law enforcement agencies are able to conduct immigration enforcement operations with ICE oversight, use federal immigration databases to identify the status of arrestees, and initiate ICE detainers to hold illegal aliens until ICE can gain custody of them, providing what could be a massive force multiplier in the Trump administration’s effort to deport at least one million illegal aliens per year.
+# The administration says its collaboration with state and local law enforcement is yielding results.
+# “Since January 20, our partnerships with state and local law enforcement have led to over 1,100 arrests of dangerous criminal illegal aliens,” the Homeland Security memo says. “ICE has also trained over 5,000 officers across the country to help track down and arrest criminal illegal aliens in their communities.”
+# One far-left organization backed by George Soros’s Open Society Foundations complained that these agreements “are designed to extend the reach of the Trump deportation machine.” Now, they’re proving to be an effective force multiplier for the Trump administration as it seeks to enforce federal immigration law.
+# One of these agreements resulted in Operation Tidal Wave, a first-of-its-kind joint immigration enforcement effort from Homeland Security and Florida."""
 
     template = """
     You are a helpful assistant that summarizes conversations.
@@ -139,6 +140,7 @@ One of these agreements resulted in Operation Tidal Wave, a first-of-its-kind jo
 
     BULLET POINT SUMMARY:
     """
+
     llm = HuggingFacePipeline(
         pipeline=text_gen_pipeline,
         model_kwargs={
@@ -154,7 +156,7 @@ One of these agreements resulted in Operation Tidal Wave, a first-of-its-kind jo
     # llm_chain = LLMChain(prompt=prompt, llm=llm)
     chain = prompt | llm | StrOutputParser()
 
-    out = chain.invoke(text)
+    out = chain.invoke(input)
     # out = llm_chain.run(text)
 
  #   quantization_config = TorchAoConfig("int4_weight_only", group_size=128)
