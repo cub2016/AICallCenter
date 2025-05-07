@@ -96,8 +96,8 @@ def use_huggingface2(input):
     # model_name = "cnicu/t5-small-booksum"
     # model_name = "sshleifer/distilbart-cnn-12-6"
     #model_name = "facebook/bart-large-cnn"
-    model_name = "huggyllama/llama-7b"
-    #model_name = "huggyllama/llama-30b"
+    #model_name = "huggyllama/llama-7b"
+    model_name = "raaec/Meta-Llama-3.1-8B-Instruct-Summarizer"
     #model_name = "google/pegasus-large"
 
     pipeline = pipeline(
