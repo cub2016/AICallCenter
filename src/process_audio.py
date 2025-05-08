@@ -14,8 +14,6 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     return sos
 
 def bandpass_filter(data, lowcut, highcut, fs, order=5):
-    print("shape is "+ str(data.shape))
-    # data.flatten()
     sos = butter_bandpass(lowcut, highcut, fs, order=order)
     return sosfilt(sos, data)
 
@@ -39,17 +37,11 @@ def process_audio(file):
     highcut = 4000.0
     filtered = bandpass_filter(samples, lowcut, highcut, fs=sr)
     normalized = normalize_audio(filtered)
-    maxi = max(normalized)
-    mini = min(normalized)
 
     # Convert back to WAV in memory
     back = normalized*(1 << (8 * audio.sample_width - 1))
-    maxi = max(back)
-    mini = min(back)
 
     back = back.flatten().astype(np.int16)
-    maxi = max(back)
-    mini = min(back)
     back = array('h', back.tolist())
     processed_audio = AudioSegment(
         back,
