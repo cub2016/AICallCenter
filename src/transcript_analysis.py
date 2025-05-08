@@ -54,7 +54,10 @@ def use_huggingface2(input):
 
     Summarize the following dialog. Identify the key points and exchanges between speakers.
     Use bullet points to describe important statements or shifts in topic.
-    Preserve who said what when it's important.
+    Preserve who said what when it's important and substitute the speaker_0 and speaker_1 
+    with the speakers name if you can. Also, give a sentiment analysis for the
+    conversation as it progresses.  give a sentiment score for the overall 
+    conversation.
 
     ```{text}```
 
@@ -91,7 +94,7 @@ def transcript_analysis(transcript):
 
     start = time.time()
     response = use_huggingface2(input)
-    #response = use_openai(input)
+    # response = use_openai(input)
     stop = time.time()
     elapsed=stop-start
     print("transcript analysis consumed " + str(elapsed))
