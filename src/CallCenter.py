@@ -1,50 +1,13 @@
-import io
 import os
-import time 
-from pyannote.audio import Pipeline
 
 from pprint import pprint
 import torch
-from transformers import pipeline
-from transformers.utils import is_flash_attn_2_available
 from pydub import AudioSegment
-import numpy as np
 
 from segment_wave_files import segment_wave_files
+from DiarizeFiles import diarize_wav_file
 from transcribe_files import transcribe_segments
 from transcript_analysis import transcript_analysis
-from process_audio import process_audio
-
-hugging_face = os.environ.get("HUGGING_FACE")
-pipelineDiary = Pipeline.from_pretrained(
-    "pyannote/speaker-diarization-3.1",
-    use_auth_token=hugging_face)
-
-pipelineDiary.to(torch.device("cuda"))
-
-def diarize_wav_file(file_name):
-
-    tmp_file = process_audio(file_name)
-
-    print("DIARIZING " + file_name)
-    start = time.time()
-    diarization = pipelineDiary(tmp_file, num_speakers=2)
-    print("Elapsed " + str(time.time() - start))
-    # {"waveform": audio_tensor, "sample_rate": sample_rate_tensor})
-    speakers = []
-    contSpeaker = ""
-    dict = None
-    for turn, _, speaker in diarization.itertracks(yield_label=True):
-        if contSpeaker != speaker:
-            if dict is not None:
-                speakers.append(dict)
-            dict = {'speaker': speaker, 'start': round(turn.start, 1),
-                    'end': round(turn.end, 1)}
-            contSpeaker = speaker
-        else:
-            dict['end'] = round(turn.end, 1)
-
-    return speakers, tmp_file
 
 location = os.path.join(".", "data") + os.sep
 #location = os.path.join("workspace", "AICallCenter", "data") + os.sep
