@@ -11,7 +11,7 @@ def segment_wave_files(speakers, file):
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    audio = AudioSegment.from_file(file, format="wav")#.resample(sample_rate_Hz=8000, sample_width=2, channels=1)
+    audio = AudioSegment.from_file(file, format="wav") #.resample(sample_rate_Hz=8000, sample_width=2, channels=1)
 
     i=0
     speakers_out = []
