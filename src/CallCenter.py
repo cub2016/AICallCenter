@@ -1,10 +1,8 @@
-# Install the assemblyai package by executing the command `pip3 install assemblyai` (macOS) or `pip install assemblyai` (Windows).
 import io
 import os
 import time 
 from pyannote.audio import Pipeline
 
-# Import the AssemblyAI module
 from pprint import pprint
 import torch
 from transformers import pipeline
@@ -17,8 +15,6 @@ from transcribe_files import transcribe_segments
 from transcript_analysis import transcript_analysis
 from process_audio import process_audio
 
-#from huggingface_hub import login
-#login()
 hugging_face = os.environ.get("HUGGING_FACE")
 pipelineDiary = Pipeline.from_pretrained(
     "pyannote/speaker-diarization-3.1",

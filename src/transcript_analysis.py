@@ -23,7 +23,8 @@ def use_huggingface2(input):
     from transformers import pipeline
     # Define the model name
     # model_name = "raaec/Meta-Llama-3.1-8B-Instruct-Summarizer"
-    model_name = "meta-llama/Llama-2-7b-chat-hf"
+    # model_name = "meta-llama/Llama-2-7b-chat-hf"
+    model_name = "TheBloke/Llama-2-7b-Chat-GPTQ"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     text_gen_pipeline = pipeline(
@@ -89,8 +90,8 @@ def transcript_analysis(transcript):
         input += speaker + "\n"
 
     start = time.time()
-    # response = use_huggingface2(input)
-    response = use_openai(input)
+    response = use_huggingface2(input)
+    #response = use_openai(input)
     stop = time.time()
     elapsed=stop-start
     print("transcript analysis consumed " + str(elapsed))

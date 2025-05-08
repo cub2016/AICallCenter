@@ -20,7 +20,7 @@ def segment_wave_files(speakers, file):
         start = speaker['start']*1000
         stop = speaker['end']*1000
         clip = audio[start:stop]
-        clip_name = folder+"\\clipFor"+speaker['speaker']+"_"+str(i)+".wav"
+        clip_name = folder + os.sep + "clipFor" + speaker['speaker'] + "_"+str(i) + ".wav"
         i+=1
         clip.export(clip_name, format="wav")
         speaker['clipFile'] = clip_name

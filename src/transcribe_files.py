@@ -4,10 +4,10 @@ import whisper
 import time
 def transcribe_segments(speakers):
     print(f"Whisper models {whisper.available_models()}")
-    model = whisper.load_model("tiny.en", device="cuda")
+    # model = whisper.load_model("tiny.en", device="cuda")
     #model = whisper.load_model("medium.en", device="cuda")
     #model = whisper.load_model("turbo", device="cuda")
-    # model = whisper.load_model("large-v3-turbo", device="cuda")
+    model = whisper.load_model("large-v3-turbo", device="cuda")
     transcripts = []
     input_file = ""
     print("Transcribing ALL segments")
@@ -30,6 +30,9 @@ def transcribe_segments(speakers):
         os.remove(input_file)
 
     print("Total Elapsed " + str(time.time() - total_start))
+    print("input_file "+input_file)
+    print(os.sep)
+    print("input_file[0:input_file.index(os.sep)] "+input_file[0:input_file.index(os.sep)])
     currdir= input_file[0:input_file.index(os.sep)]
     os.rmdir(currdir)
 
